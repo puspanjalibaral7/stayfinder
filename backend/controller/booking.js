@@ -16,8 +16,13 @@ export const getAllBooking = async (req, res) => {
 
 export const getBooking = async (req, res) => {
   try {
-    const email = req.user.email;
-    const booking = await Booking.find({"email": email})
+    const id = req.user.id;
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    console.log("Fetching booking for email:", user.email);
+    const booking = await Booking.find({"email": user.email})
       .populate("hotel", "name price");
     if (!booking) {
       return res.status(404).json({ message: "Booking not found" });
